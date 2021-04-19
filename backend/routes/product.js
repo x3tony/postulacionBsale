@@ -1,7 +1,16 @@
-const { Router } = require('express');
-const router = Router();
-
+const express = require('express');
+const router = express.Router();
 const pool = require('../databse');
-router.get('/product', (req, res) => res.json({text: 'hola loco'}));
+
+router.get('/', async(req, res) => {
+    const pro = await pool.query('SELECT * FROM product');
+    res.json(pro);
+});
+
+router.get('/:name', async(req, res) =>{
+    nameBuscado = req.params.name;
+    const pro = await pool.query(`SELECT * FROM product WHERE name LIKE "${nameBuscado}%"`);
+    res.json(pro);
+})
 
 module.exports = router;
