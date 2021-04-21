@@ -1,6 +1,6 @@
 class CategoryService {
     constructor(){
-        this.URI = 'http://localhost:3000/api/category';
+        this.URI = '/api/category';
     }
 
     async getCategories(){
