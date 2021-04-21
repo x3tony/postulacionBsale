@@ -9,7 +9,7 @@ router.get('/', async(req, res) => {
 
 router.get('/:name', async(req, res) =>{
     nameBuscado = req.params.name;
-    const pro = await pool.query(`SELECT * FROM product WHERE name LIKE "${nameBuscado}%"`);
+    const pro = await pool.query(`SELECT * FROM product WHERE (name LIKE "${nameBuscado}%" OR name LIKE "%${nameBuscado}%") `);
     res.json(pro);
 })
 

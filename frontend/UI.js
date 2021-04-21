@@ -1,82 +1,64 @@
 import ProductService from './services/productService';
+import CategoryService from './services/categoryService';
 const productoService = new ProductService();
+const categoryService = new CategoryService();
 
 class UI {
     async renderProduct(){
         const products = await productoService.getProducts();
-        console.log(products);
-        const productContainer = document.getElementById('productos');
-        productContainer.innerHTML = '';
-        products.forEach(producto => {
-            const div = document.createElement('div');
-            div.classList.add('card', 'col-md-2');
-            // Body
-            const divCardBody = document.createElement('div');
-            divCardBody.classList.add('card-body');
-            // Imagen
-            const divImagen = document.createElement('img');
-            divImagen.classList.add('img-fluid');
-            divImagen.setAttribute('src', producto.url_image);
-            // Titulo
-            const divTitle = document.createElement('h5');
-            divTitle.classList.add('card-title');
-            divTitle.textContent = producto.name;
-            // Precio
-            const divPrecio = document.createElement('p');
-            divPrecio.classList.add('card-text');
-            divPrecio.textContent = producto.price - producto.discount;
-            // Boton 
-            const divBoton = document.createElement('button');
-            divBoton.classList.add('btn', 'btn-primary');
-            divBoton.textContent = 'carrito';
-            // Insertamos
-            divCardBody.appendChild(divImagen);
-            divCardBody.appendChild(divTitle);
-            divCardBody.appendChild(divPrecio);
-            divCardBody.appendChild(divBoton);
-            div.appendChild(divCardBody);
-            productContainer.appendChild(div);
-        });
+        const category = await categoryService.getCategories();
+        products.forEach(this.productsRender);
+        category.forEach(this.categoryRender);
+    }
+    productsRender(products){
+        const productContainer = document.getElementById('products');
+        const producto = document.createElement('div');
+        producto.innerHTML= `
+        <div class="product-item">
+            <img src=${products.url_image} alt="" onerror="this.src='https://aqt.cl/wp-content/uploads/2020/09/sin_imagen.jpg';" width="100%">
+            <div class="txt">
+                <a><small>${products.name}</small></a>
+            </div>
+            <div class="footer">
+                <p class="left">${products.price - products.discount}</p>
+                <button class="btn"><i class="fas fa-shopping-cart"></i></button>
+            </div>
+        </div>
+        `;
+        productContainer.appendChild(producto);
+    }
+    categoryRender(categories){
+        const categoryContainer = document.getElementById('categories');
+        const category = document.createElement('a');
+        category.innerHTML = `
+            <a href="#" class="btn category_item form-control" name="${categories.id}"><strong>${categories.name}</strong></a>
+        `;
+        categoryContainer.appendChild(category);
     }
     async buscarProducto(name){
         const products = await productoService.findProducts(name);
-        console.log(products);
-        this.renderProduct(products);
-    }
+        this.vaciarHTML();
+        this.vaciarBusqueda();
+        products.forEach(this.productsRender);
 
-    async renderProducts(products){
-        const productContainer = document.getElementById('productos');
+    }
+    async findProductPerCategory(e){
+        const id = e.name;
+        const res = await categoryService.findProductPerCategory(id);
+        console.log(res);
+        this.vaciarHTML();
+        res.forEach(this.productsRender);
+    }
+    vaciarHTML(){
+        const productContainer = document.getElementById('products');
         productContainer.innerHTML = '';
-        products.forEach(producto => {
-            const div = document.createElement('div');
-            div.classList.add('card', 'col-md-2');
-            // Body
-            const divCardBody = document.createElement('div');
-            divCardBody.classList.add('card-body');
-            // Imagen
-            const divImagen = document.createElement('img');
-            divImagen.classList.add('img-fluid');
-            divImagen.setAttribute('src', producto.url_image);
-            // Titulo
-            const divTitle = document.createElement('h5');
-            divTitle.classList.add('card-title');
-            divTitle.textContent = producto.name;
-            // Precio
-            const divPrecio = document.createElement('p');
-            divPrecio.classList.add('card-text');
-            divPrecio.textContent = producto.price - producto.discount;
-            // Boton 
-            const divBoton = document.createElement('button');
-            divBoton.classList.add('btn', 'btn-primary');
-            divBoton.textContent = 'carrito';
-            // Insertamos
-            divCardBody.appendChild(divImagen);
-            divCardBody.appendChild(divTitle);
-            divCardBody.appendChild(divPrecio);
-            divCardBody.appendChild(divBoton);
-            div.appendChild(divCardBody);
-            productContainer.appendChild(div);
-        });
+    }
+    vaciarBusqueda(){
+        const busqueda = document.getElementsByClassName('buscar');
+        
+    }
+    errorProduct(){
+        window.alert('No existe un producto con ese nombre');
     }
     
 }

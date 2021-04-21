@@ -19,9 +19,10 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
-app.use(cors());
+// app.use(cors());
 
 app.use('/api/product', require('./routes/product'));
+app.use('/api/category', require('./routes/category'));
 
 app.use(express.static(path.join(__dirname, '/public')));
 
